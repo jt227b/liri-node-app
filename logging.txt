@@ -1,0 +1,10 @@
+Remember use 'node liri.js concert-this garth brooks' or 'node liri.js spotify-this-song santeria' or 'node liri.js movie-this scarface' or 'node liri.js do-what-it-says'
+Please try again! I don't understand you! 
+
+Please try again! I don't understand you! 
+
+Remember use 'node liri.js concert-this garth brooks' or 'node liri.js spotify-this-song santeria' or 'node liri.js movie-this scarface' or 'node liri.js do-what-it-says'
+Song for santeria
+Song for santeria
+Song for santeria
+Song for santeria
