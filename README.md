@@ -20,7 +20,7 @@ Moment
 DotEnv
 ```
 
-### Terminal
+## Terminal
 
 To search for any Bands in Town, Spotify Songs and OMDB Movies you'll:
 
@@ -79,11 +79,20 @@ Venue Location: Arlington, TX
 Event Date: 05/10/2019
 
 ```
+## Screenshots
 
+1. node liri.js concert-this
+<img src="images/ConcertThis.png">
+
+1. node liri.js spotify-this-song
+<img src="images/SpotifyThisSong.png">
+
+1. node liri.js movie-this
+<img src="images/MovieThis.png">
 
 ## Acknowledgments
 
 * Huge Thanks to Nina Calderone (NiBeCa) who took time off to help both Onix Castro (onix-xccc) and Myself with issues we had when running our codes. We coordinated to join in a Tech room using Zoom to share screens and correct errors consoled out. 
 
-## Screenshots
+
 
