@@ -22,7 +22,7 @@ DotEnv
 
 ### Terminal
 
-To search for any Bands in Town, Spotify Songas and OMDB Movies you'll:
+To search for any Bands in Town, Spotify Songs and OMDB Movies you'll:
 
 * node liri.js concert-this
 
