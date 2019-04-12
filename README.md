@@ -20,7 +20,7 @@ Moment
 DotEnv
 ```
 
-## Terminal
+## Terminal Walk-Through
 
 To search for any Bands in Town, Spotify Songs and OMDB Movies you'll:
 
@@ -84,11 +84,11 @@ Event Date: 05/10/2019
 1. node liri.js concert-this
 <img width="287" alt="ConcertThis" src="https://user-images.githubusercontent.com/46248532/56013052-b1e5b200-5cb4-11e9-954b-18f43a246f17.png">
 
-1. node liri.js spotify-this-song
-<img src="./images/MovieThis.png">
+2. node liri.js spotify-this-song
+<img width="429" alt="SpotifyThisSong" src="https://user-images.githubusercontent.com/46248532/56013150-0ab54a80-5cb5-11e9-874c-3567516f298e.png">
 
-1. node liri.js movie-this
-<img src="images/MovieThis.png">
+3. node liri.js movie-this
+<img width="714" alt="MoiveThis" src="https://user-images.githubusercontent.com/46248532/56013154-0ee16800-5cb5-11e9-8e3a-f0bb69c59e8d.png">
 
 ## Acknowledgments
 
