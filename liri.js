@@ -1,134 +1,193 @@
 require("dotenv").config();
 
-var Spotify = require('node-spotify-api');
 var keys = require("./keys.js");
-const axios = require("axios");
-const moment = require("moment");
+var axios = require("axios");
+var moment = require("moment");
+var Spotify = require('node-spotify-api');
+var spotify = new Spotify(keys.spotify);
+var readline = require("readline")
+var rl = readline.createInterface(process.stdin, process.stdout);
+var fs = require("fs");
 
 
-var input = process.argv.slice(2).join(" ");
-var type = input[0];
+// Function // // Function // // Function // // Function // // Function // // Function //
+function runSearch(type, search) {
+    switch (type) {
+        case "c":
+            concerts(search);
+            break;
 
-// loop // // loop // // loop // // loop // // loop // // loop // // loop //
-var search = "";
-for (var i = 1; i < input.length; i++) {
-    (i > 1 && i < input.length) ? search = search + input[i]
-        : (i = 1) ? search = input[1].trim()
-            : "Please enter artist or movie name";
-}
-console.log(type);
-console.log(search);
+        case "s":
+            songs(search);
+            break;
 
+        case "m":
+            movies(search);
+            break;
 
-// Conditions // // Conditions // // Conditions // // Conditions // // Conditions //
+        case "concert-this":
+            concerts(search);
+            break;
 
-switch (type) {
-    // concert-this //
-    case "c":
-        concerts(search);
-        break;
+        case "spotify-this-song":
+            songs(search);
+            break;
 
-    // spotify-this-song //
-    case "s":
-        songs(search);
-        break;
+        case "movie-this":
+            movies(search);
+            break;
 
-    // movie-this //
-    case "m":
-        movies(search);
-        break;
-
-    // do-what-it-says //
-    case "r":
-        fileText(search);
-        break;
+    }
 }
 
+// Object // // Object // // Object // // Object // // Object // // Object // // Object //                   
+var userInput = {
+    type: "",
+    search: [],
+};
 
-// Bands In Town // // Bands In Town // // Bands In Town // // Bands In Town // // Bands In Town //
+// Prompt for Requested Search // // Prompt for Requested Search // // Prompt for Requested Search //
+var firstPrompt = `\nWhat would you like to search?
+                    \nEnter LETTER or term for ONE of the options below:
+                    \nc - concert-this,
+                    \ns - spotify-this-song,
+                    \nm - movie-this,
+                    \nr - do-what-I-say\n\n`;
+
+
+// Function // // Function // // Function // // Function // // Function // // Function //
+rl.question(firstPrompt, function (firstAnswer) {
+    userInput.type = firstAnswer.trim();
+
+    if (userInput.type === "r" || userInput.type === "do-what-I-say") {
+        rl.close();
+        fileContent();
+
+    }
+
+    else {
+        if (userInput.type === "c" || userInput.type === "concert-this") {
+            rl.setPrompt("\nPlease enter name of an artist or a band\n\n");
+        }
+
+        else if (userInput.type === "s" || userInput.type === "spotify-this-song") {
+            rl.setPrompt("\nPlease enter name of a song\n\n");
+        }
+
+        else if (userInput.type === "m" || userInput.type === "movie-this") {
+            rl.setPrompt("\nPlease enter name of a movie\n\n");
+        }
+
+        rl.prompt();
+
+        rl.on("line", function (secondAnswer) {
+            userInput.search.push(secondAnswer.trim());
+            runSearch(userInput.type, userInput.search[0]);
+            rl.close();
+        });
+    }
+});
+
+
+// BandsInTown // // Function // // BandsInTown // // Function // // BandsInTown // // Function // // BandsInTown //
 var codingBC = "codingbootcamp"
 
 function concerts(artist) {
     axios.get(`https://rest.bandsintown.com/artists/${artist}/events?app_id=${codingBC}`)
         .then(function (response) {
-            var results = response.data;
-            for (var i = 0; i < results.length; i++) {
-                if (results[i].venue.country === "United States") {
-                    console.log(`\nLocation ${i + 1}- In the United States`);
-                    console.log("-----------------------------------------")
-                    console.log(`Venue Name: ${results[i].venue.name}`);
-                    console.log(`Venue Location: ${results[i].venue.city}, ${results[i].venue.region}`);
-                    console.log(`Event Date: ${moment(results[i].datetime).format('L')}`);
+            var r = response.data;
 
-                } else if (results[i].venue.country !== "") {
-                    console.log(`\nLocation ${i + 1}- Outside the United States`);
-                    console.log("-----------------------------------------")
-                    console.log(`Venue Name: ${results[i].venue.name}`);
-                    console.log(`Venue Location: ${results[i].venue.city}, ${results[i].venue.country}`);
-                    console.log(`Event Date: ${moment(results[i].datetime).format('L')}`);
+            for (var i = 0; i < r.length; i++) {
+                if (r[i].venue.country === "United States") {
+                    console.log(`\n${i + 1}- ${r[i].venue.country}`);
+                    console.log(`-----------------------------------`);
+                    console.log(`Venue Name: ${r[i].venue.name}`);
+                    console.log(`Venue Location: ${r[i].venue.city}, ${r[i].venue.region}`);
+                    console.log(`Event Date: ${moment(r[i].datetime).format('L')}`);
+
+                } else if (r[i].venue.country !== "United States") {
+                    console.log(`\n${i + 1}- ${r[i].venue.country}`);
+                    console.log(`------------------------------------`);
+                    console.log(`Venue Name: ${r[i].venue.name}`);
+                    console.log(`Venue Location: ${r[i].venue.city}`);
+                    console.log(`Event Date: ${moment(r[i].datetime).format('L')}`);
                 }
             }
         });
 }
 
 
+// Spotify // // Function // // Spotify // // Function // // Spotify // // Function // // Spotify // 
+function songs(song) {
 
+    (song === "") ? song = "The Sign" : song;
 
-// Spotify // // Spotify // // Spotify // // Spotify // // Spotify // // Spotify //
+    spotify.search({ type: 'track', query: song, limit: 1 }, function (err, data) {
+        if (err) {
+            console.log(err);
+        }
 
-// function songs(song) {
-//     var spotify = new Spotify(keys.spotify);
-//     spotify.search({
-//         type: 'track',
-//         query: song,
-//         limit: 1
-//     },
-//         function (err, data) {
-//             if (err) {
-//                 console.log(err);
-//             }
-//             console.log(data);
-//             console.log(JSON.stringify(data));
-//         });
-// }
+        var d = data.tracks.items[0];
+        console.log(`\n---------------------------------`);
+        console.log(`Artist: ${d.artists[0].name}`);
+        console.log(`Song: ${song.charAt(0).toUpperCase() + song.slice(1)}`);
+        console.log(`Preview Link: ${d.preview_url}`);
+        console.log(`Album: ${d.album.name}`);
+        console.log(`----------------------------------`);
 
+    });
+}
 
-// IMDB // // IMDB // // IMDB // // IMDB // // IMDB // // IMDB // // IMDB //
-
+// OMDB // // Function // // OMDB // // Function // // OMDB // // Function // // OMDB //
 function movies(movie) {
 
     (movie === "") ? movie = "Mr.Nobody" : movie;
 
     axios.get(`http://www.omdbapi.com/?t=${movie}&y=&plot=short&apikey=trilogy`)
         .then(function (response) {
-            var results = response.data;
-            console.log("\nYou forgot to enter a movie name.");
-            console.log("If you haven't watched 'Mr. Nobody', then you should: https://www.imdb.com/title/tt0485947/.");
-            console.log("It's on Netflix");
+            var r = response.data;
 
-            console.log(`\nMovie Title: ${results.Title}`);
-            console.log(`Year Released: ${results.Year}`);
-            console.log(`IMDB Rating: ${results.Ratings[0].Value}`);
-            console.log(`Rotten Tomatoes Rating: ${results.Ratings[1].Value}`);
-            console.log(`Country of Production: ${results.Country}`);
-            console.log(`Movie Language: ${results.Language}`);
-            console.log(`Movie Plot: ${results.Plot}`);
-            console.log(`Movie Cast: ${results.Actors}`);
+            function movieContent() {
+                console.log(`\nMovie Title: ${r.Title}`);
+                console.log(`=================================`);
+                console.log(`Year Released: ${r.Year}`);
+                console.log(`Movie Cast: ${r.Actors}`);
+                console.log(`---------------------------------`);
+                console.log(`IMDB Rating: ${r.Ratings[0].Value}`);
+                console.log(`Rotten Tomatoes Rating: ${r.Ratings[1].Value}`);
+                console.log(`---------------------------------"`);
+                console.log(`Country of Production: ${r.Country}`);
+                console.log(`Movie Language: ${r.Language}`);
+                console.log(`---------------------------------`);
+                console.log(`Movie Plot: ${r.Plot}`);
+            }
+
+            if (movie !== "Mr.Nobody") {
+                movieContent();
+
+            }
+
+            else {
+                console.log(`--------------------------------`);
+                console.log(`You forgot to enter a movie name.`);
+                console.log(`If you haven't watched 'Mr. Nobody', then you should: https://www.imdb.com/title/tt0485947/.`);
+                console.log(`It's on Netflix.`);
+                console.log(`---------------------------------`);
+                movieContent();
+            }
         });
 }
 
 
+// Function // // Function // // Function // // Function // // Function // // Function //
 
-function fileText() {
+function fileContent() {
 
-    fs.readFile("random.txt", "utf8", function (error, data) {
+    fs.readFile("random.txt", "utf8", function (error, content) {
         if (error) {
-            return console.log(error);
+            return (error);
         }
-        console.log(data);
-        var dataArr = data.split(",");
-        console.log(dataArr);
+        var contentArr = content.split(",");
+        runSearch(contentArr[0].trim(), contentArr[1].trim());
     });
-
-
 }
