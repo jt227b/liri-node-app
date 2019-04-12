@@ -82,7 +82,7 @@ Event Date: 05/10/2019
 ## Screenshots
 
 1. node liri.js concert-this
-![concert-this](images\ConcertThis.png)
+<img width="287" alt="ConcertThis" src="https://user-images.githubusercontent.com/46248532/56013052-b1e5b200-5cb4-11e9-954b-18f43a246f17.png">
 
 1. node liri.js spotify-this-song
 <img src="./images/MovieThis.png">
